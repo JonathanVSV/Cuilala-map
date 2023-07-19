@@ -14,17 +14,25 @@ barrancas <- st_read("Data/BarrancasAll.gpkg") |>
   st_transform(4326)
 DEM <- raster("Data/DEM.tif")
 
+sitios <- sitios |> 
+  mutate(
+    across(Nombre, 
+           ~ case_when(
+             .x == "Puerto del Mamey" ~ paste0(.x, '<br><img src="imgs/puertomamey.JPG" height="150" width="180">'),
+             .x == "Pichilinguillo" ~ paste0(.x, '<br><img src="imgs/pichilinguillo.JPG" height="150" width="180">'),
+             TRUE ~ .x)))
+
 mypal <- gray(seq(0,1,length.out = 10))
 
 myIcons <- icons(
-  iconUrl = case_when(sitios$Geositio == "Localidad" ~ "imgs/house.png",
-                      sitios$Geositio == "Templo" ~ "imgs/iglesia.png",
-                      sitios$Geositio == "Arbol" ~ "imgs/tree.png",
-                      sitios$Geositio == "Cerro" ~ "imgs/peak.png",
-                      sitios$Geositio == "Paraje" ~ "imgs/walker.png",
-                      sitios$Geositio == "Ranchería" ~ "imgs/hostel.png",
-                      sitios$Geositio == "Crucero" ~ "imgs/crossroad.png",
-                      TRUE ~ "imgs/circle.png"),
+  iconUrl = case_when(sitios$Geositio == "Localidad" ~ "icons/house.png",
+                      sitios$Geositio == "Templo" ~ "icons/iglesia.png",
+                      sitios$Geositio == "Arbol" ~ "icons/tree.png",
+                      sitios$Geositio == "Cerro" ~ "icons/peak.png",
+                      sitios$Geositio == "Paraje" ~ "icons/walker.png",
+                      sitios$Geositio == "Ranchería" ~ "icons/hostel.png",
+                      sitios$Geositio == "Crucero" ~ "icons/crossroad.png",
+                      TRUE ~ "icons/circle.png"),
   iconWidth = 15, 
   iconHeight = 15,
   iconAnchorX = 7,
@@ -34,14 +42,14 @@ myIcons <- icons(
   # shadowAnchorX = 4, shadowAnchorY = 62
 )
 
-html_legend <- '<img src="imgs/house.png" height="15" width="15">Localidad<br>
-                <img src="imgs/iglesia.png" height="15" width="15">Templo<br>
-                <img src="imgs/tree.png" height="15" width="15">Árbol<br>
-                <img src="imgs/peak.png" height="15" width="15">Cerro<br>
-                <img src="imgs/walker.png" height="15" width="15">Paraje<br>
-                <img src="imgs/hostel.png" height="15" width="15">Ranchería<br>
-                <img src="imgs/crossroad.png" height="15" width="15">Crucero<br>
-                <img src="imgs/circle.png" height="15" width="15">Otro<br>'
+html_legend <- '<img src="icons/house.png" height="15" width="15">Localidad<br>
+                <img src="icons/iglesia.png" height="15" width="15">Templo<br>
+                <img src="icons/tree.png" height="15" width="15">Árbol<br>
+                <img src="icons/peak.png" height="15" width="15">Cerro<br>
+                <img src="icons/walker.png" height="15" width="15">Paraje<br>
+                <img src="icons/hostel.png" height="15" width="15">Ranchería<br>
+                <img src="icons/crossroad.png" height="15" width="15">Crucero<br>
+                <img src="icons/circle.png" height="15" width="15">Otro<br>'
 
     # Create the leaflet map
 map <-  leaflet(data = sitios) %>%
@@ -53,6 +61,7 @@ map <-  leaflet(data = sitios) %>%
                  # color = ~pal(Geositio),
                  popup = ~Nombre,
                  group = "Sitios",
+                 # popupOptions =  popupOptions(                        style = list("color" = "red"))
                  # radius = 5,
                  icon = myIcons,
                  # fillColor = "blue"#,

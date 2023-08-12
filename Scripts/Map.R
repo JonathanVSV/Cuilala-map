@@ -12,6 +12,12 @@ sitios <- st_read("Data/SitiosPtsAll.gpkg") |>
   st_transform(4326)
 barrancas <- st_read("Data/BarrancasAll.gpkg") |>
   st_transform(4326)
+caminos <- st_read("Data/CaminosAll.gpkg") |>
+  st_transform(4326) |>
+  st_make_valid() |>
+  st_cast("MULTILINESTRING")
+linderos <- st_read("Data/LinderosPosibles.gpkg") |>
+  st_transform(4326)
 DEM <- raster("Data/DEM.tif")
 
 sitios <- sitios |> 
@@ -49,19 +55,25 @@ html_legend <- '<img src="icons/house.png" height="15" width="15">Localidad<br>
                 <img src="icons/walker.png" height="15" width="15">Paraje<br>
                 <img src="icons/hostel.png" height="15" width="15">Ranchería<br>
                 <img src="icons/crossroad.png" height="15" width="15">Crucero<br>
-                <img src="icons/circle.png" height="15" width="15">Otro<br>'
+                <img src="icons/circle.png" height="15" width="15">Otro<br>
+                <img src="icons/lindero.png" height="15" width="15">Linderos posibles<br>
+                <img src="icons/camino.png" height="15" width="15">Caminos<br>'
 
     # Create the leaflet map
-map <-  leaflet(data = sitios) %>%
+map <-  leaflet() %>%
       #addTiles(group = 'Esri.WorldImagery') %>%
-      addProviderTiles('Esri.WorldImagery') %>% 
+      addProviderTiles('Esri.WorldTopoMap',
+                   group = 'ESRI Topo') %>% 
+      addProviderTiles('Esri.WorldImagery',
+                       group = 'ESRI Imagery') %>% 
+      
       # Add the vector layer
       # addCircleMarkers(data = sitios,
       addMarkers(data = sitios,
                  # color = ~pal(Geositio),
                  popup = ~Nombre,
                  group = "Sitios",
-                 # popupOptions =  popupOptions(                        style = list("color" = "red"))
+                 # popupOptions =  popupOptions(style = list("color" = "red"))
                  # radius = 5,
                  icon = myIcons,
                  # fillColor = "blue"#,
@@ -80,19 +92,28 @@ map <-  leaflet(data = sitios) %>%
       addPolylines(data = barrancas,
                    color = "royalblue",
                    group = "Barrancas",
-                   popup = ~Nombre
-      ) %>%
+                   popup = ~Nombre) %>%
+      # Add polylines layer
+      addPolylines(data = linderos,
+                   color = "#EE0505",
+                   group = "Posibles linderos",
+                   popup = ~Nombre,
+                   weight = 0.7) %>%
+      # # Add polylines layer
+      addPolylines(data = caminos,
+                   color = "#F0F31C",
+                   group = "Caminos",
+                   popup = ~Nombre,
+                   weight = 0.7) %>%
       addLayersControl(
         # overlayGroups = c("Sitios"),
-        baseGroups = c("ESRI Imagery"),
-        overlayGroups = c("Sitios", "Barrancas", "MDE"),
-        options = layersControlOptions(collapsed = FALSE)
-      ) %>%
+        baseGroups = c("ESRI Imagery", "ESRI Topo"),
+        overlayGroups = c("Sitios", "Barrancas", "MDE", "Posibles linderos", "Caminos"),
+        options = layersControlOptions(collapsed = FALSE)) %>%
       addControl(
         html = html_legend,
         # layerID = "Sitios",
-        position = "bottomleft"
-      ) |>
+        position = "bottomleft") |>
       addScaleBar(position = "bottomright",
                   options = scaleBarOptions(
                     maxWidth = 100,

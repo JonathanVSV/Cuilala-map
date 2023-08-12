@@ -60,7 +60,8 @@ html_legend <- '<img src="icons/house.png" height="15" width="15">Localidad<br>
                 <img src="icons/camino.png" height="15" width="15">Caminos<br>'
 
     # Create the leaflet map
-map <-  leaflet() %>%
+map <-  leaflet(options = leafletOptions(
+  attributionControl=FALSE)) %>%
       #addTiles(group = 'Esri.WorldImagery') %>%
       addProviderTiles('Esri.WorldTopoMap',
                    group = 'ESRI Topo') %>% 
@@ -98,13 +99,13 @@ map <-  leaflet() %>%
                    color = "#EE0505",
                    group = "Posibles linderos",
                    popup = ~Nombre,
-                   weight = 0.7) %>%
+                   weight = 3) %>%
       # # Add polylines layer
       addPolylines(data = caminos,
-                   color = "#F0F31C",
+                   color = "#F9FC24",
                    group = "Caminos",
                    popup = ~Nombre,
-                   weight = 0.7) %>%
+                   weight = 3) %>%
       addLayersControl(
         # overlayGroups = c("Sitios"),
         baseGroups = c("ESRI Imagery", "ESRI Topo"),

@@ -26,6 +26,8 @@ sitios <- sitios |>
            ~ case_when(
              .x == "Puerto del Mamey" ~ paste0(.x, '<br><img src="imgs/puertomamey.JPG" height="150" width="180">'),
              .x == "Pichilinguillo" ~ paste0(.x, '<br><img src="imgs/pichilinguillo.JPG" height="150" width="180">'),
+             .x == "Niños Heroes" ~ paste0(.x, '<br><img src="imgs/mural1.jpg" height="150" width="180">'),
+             .x == "In Kali In Kimatilisli" ~ paste0(.x, '<br><img src="imgs/mural2.jpg" height="150" width="180">'),
              TRUE ~ .x)))
 
 mypal <- gray(seq(0,1,length.out = 10))
